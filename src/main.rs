@@ -10,10 +10,15 @@ use lazy_static::lazy_static;
 mod temperature;
 use temperature::Temperature;
 
+// Номер шины
 const I2C_PATH: &str = "/dev/i2c-1";
+// Адрес винтелятора
 const ADDRESS: u16 = 0x1a;
+// Минимальная температура. Если температура меньше или равна то скорость вентилятора 0
 const MIN_TEMPERATURE: u8 = 50;
+// Максимальная температура.
 const MAX_TEMPERATURE: u8 = 65;
+// Частота обновления показаний в секундах
 const TIMEOUT_SEC: u8 = 1;
 
 lazy_static! {
