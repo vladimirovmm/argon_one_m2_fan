@@ -4,8 +4,8 @@ use sysinfo::{ComponentExt, System, SystemExt};
 const AVG_LENGTH: usize = 10;
 
 pub struct Temperature {
-    system_info: sysinfo::System,
-    list: [u8; AVG_LENGTH + 1],
+    system_info: System,
+    list: [f32; AVG_LENGTH + 1],
 }
 
 impl Temperature {
@@ -24,7 +24,7 @@ impl Temperature {
             .list
             .iter()
             .enumerate()
-            .find(|(.., value)| **value == 0)
+            .find(|(.., value)| **value == 0.0)
             .map(|(pos, ..)| pos)
             .unwrap_or_default();
         self.list[pos] = temperature(&mut self.system_info);
@@ -33,23 +33,23 @@ impl Temperature {
         if pos > AVG_LENGTH {
             pos = 0;
         }
-        self.list[pos] = 0;
+        self.list[pos] = 0.0;
     }
 
-    pub fn get(&mut self) -> u8 {
+    pub fn get(&mut self) -> f32 {
         self.update();
-        let sum: usize = self
+        let sum = self
             .list
             .iter()
-            .filter(|val| **val != 0)
+            .filter(|val| **val != 0.0)
             .map(|val| *val as usize)
-            .sum();
+            .sum::<usize>() as f32;
 
-        (sum / AVG_LENGTH) as u8
+        sum / AVG_LENGTH as f32
     }
 }
 
-fn temperature(system_info: &mut System) -> u8 {
+fn temperature(system_info: &mut System) -> f32 {
     system_info.refresh_components();
-    system_info.components()[0].temperature() as u8
+    system_info.components()[0].temperature()
 }

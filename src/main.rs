@@ -15,9 +15,9 @@ const I2C_PATH: &str = "/dev/i2c-1";
 // Адрес винтелятора
 const ADDRESS: u16 = 0x1a;
 // Минимальная температура. Если температура меньше или равна то скорость вентилятора 0
-const MIN_TEMPERATURE: u8 = 50;
+const MIN_TEMPERATURE: f32 = 50.0;
 // Максимальная температура.
-const MAX_TEMPERATURE: u8 = 65;
+const MAX_TEMPERATURE: f32 = 65.0;
 // Частота обновления показаний в секундах
 const TIMEOUT_SEC: u8 = 1;
 
@@ -34,14 +34,14 @@ fn set_fan_speed(mut speed: u8) -> Result<()> {
     Ok(())
 }
 
-fn fan_speed_calculation(temp: u8) -> u8 {
+fn fan_speed_calculation(temp: f32) -> u8 {
     if temp < MIN_TEMPERATURE {
         return 0;
     } else if temp > MAX_TEMPERATURE {
         return 100;
     }
 
-    ((temp - MIN_TEMPERATURE) as f32 * (100_f32 / (MAX_TEMPERATURE - MIN_TEMPERATURE) as f32)) as u8
+    ((temp - MIN_TEMPERATURE) * (100.0 / (MAX_TEMPERATURE - MIN_TEMPERATURE))) as u8
 }
 
 fn processing_temperature() -> Result<()> {
